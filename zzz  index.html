@@ -141,16 +141,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const minutes = parseInt(document.getElementById('showTime').value || 3);
-    const segments = minutes * 2; // 每分鐘 2 個動作段
-    const per = Math.round((minutes * 60) / segments);
 
-    const pool = [...selected];
+    // 使用者實際選到的動作物件（含秒數）
+    const pool = moves.filter(m => selected.has(m.name));
 
-    for (let i = 0; i < segments; i++) {
-      const move = randomPick(pool); // 每一段都重新隨機抽
+    let totalSeconds = 0;
+    while (totalSeconds < minutes * 60) {
+      const move = randomPick(pool);
+      totalSeconds += move.seconds;
+      if (totalSeconds > minutes * 60) break;
+
       const card = document.createElement('div');
       card.className = 'timeline-card';
-      card.innerHTML = `<div class="timeline-time">${per}s</div><div class="segment">${move}</div>`;
+      card.innerHTML = `<div class="timeline-time">${move.seconds}s</div><div class="segment">${move.name}</div>`;
       timeline.appendChild(card);
     }
   });
